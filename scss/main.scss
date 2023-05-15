@@ -2,23 +2,74 @@
 @import "./resets";
 @import "./variables";
 
+// Functions in sass return a particular value which can be
+// assigned to a css property
+@function weight($weight-name){
+    @return map-get($map: $font-weights, $key: $weight-name);
+}
+
+// Creating a mixins are similar to functions but they incase 
+// complete properties. Mixins can choose to take in arguments
+// just like functions, can have default keyword arguments 
+// which can be further edited by overriding it
+@mixin flexCenter($direction : row){
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: $direction;
+}
+
+@mixin theme($light-theme: true){
+    @if $light-theme {
+        background: lighten($primary-color, 100%);
+        color: darken($text-color, 100%);
+    }
+}
+
+@mixin mobile{
+    // Learn about media queries
+    @media (max-width: $mobile){
+        @content;
+    }
+}
+// NOTE : Functions should return values, mixins should return
+// complete styles
 
 body{
     background: $primary-color;
     color: $text-color;
-    font-weight: map-get($map: $font-weights, $key: bold);
 }
 
 .main{
+    @include flexCenter(row);
+
     width: 80%;
     margin: 0 auto;
 
-    #{&}__paragraph {
-        font-weight: map-get($map: $font-weights, $key: bold);
+    #{&}__paragraph1 {
+        font-weight: weight(regular);
 
+        // Accessing pseudo classes
         &:hover{
             color: pink;
         }
     }
+
+    #{&}__paragraph2{
+        @extend .main__paragraph1;
+
+        &:hover{
+            color: $accent-color ;
+        }
+    }
+
+    @include mobile {
+        flex-direction: column;
+    }
+}
+
+// Creating a theme
+.light {
+    @include theme($light-theme: true)
 }
 
